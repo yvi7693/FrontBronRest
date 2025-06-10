@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import RestaurantLayout from './RestaurantLayout';
 import RestaurantDesigner from './RestaurantDesigner';
 import './App.css';
+import logo from './logo.png'; // Положите ваш логотип в src/logo.png
 
 const initialFirstFloorTables = [
   { _id: '1', number: 1, x: 340, y: 50, seats: 2, width: 80, height: 40 },
@@ -24,7 +25,7 @@ const initialSecondFloorTables = [
 const initialSecondFloorWalls = [];
 
 function App() {
-  // Cостояния с localStorage для приятного UX
+  // Состояния с localStorage для UX
   const [floor, setFloor] = useState(() => Number(localStorage.getItem('floor')) || 1);
   const [editMode, setEditMode] = useState(() => JSON.parse(localStorage.getItem('editMode')) || false);
 
@@ -56,10 +57,12 @@ function App() {
 
   return (
     <div className="rbr-bg">
+      <div className="rbr-logo-top">
+        <img src={logo} alt="Логотип" className="rbr-logo-img-top" />
+      </div>
       <div className="rbr-container">
         <div className="rbr-header">
-          <svg viewBox="0 0 32 32" className="rbr-logo"><circle cx="16" cy="16" r="16" fill="#4267e7"/><rect x="8" y="19" width="16" height="6" rx="3" fill="#fff"/><rect x="10" y="7" width="12" height="10" rx="3" fill="#fff"/><rect x="12.5" y="9.5" width="7" height="5" rx="2.5" fill="#4267e7"/></svg>
-          <span>Рассадка ресторана</span>
+          Рассадка ресторана
         </div>
         <div className="rbr-toolbar">
           <button
@@ -125,13 +128,13 @@ function App() {
   );
 }
 
-// SVG иконки (оптимизированы)
+// SVG Иконки без изменений
 function FloorIcon() { return <svg width="18" height="18" viewBox="0 0 20 20"><rect x="2" y="13" width="16" height="5" rx="2.5" fill="#4267e7" opacity=".5"/></svg>; }
 function FloorIconActive() { return <svg width="18" height="18" viewBox="0 0 20 20"><rect x="2" y="13" width="16" height="5" rx="2.5" fill="#4267e7"/></svg>; }
-function EditIcon() { return <svg width="18" height="18" viewBox="0 0 20 20"><path d="M4 13.5V16h2.5l7.4-7.4-2.5-2.5L4 13.5z" fill="#4267e7"/><path d="M15.7 7.29a1 1 0 000-1.42l-2.54-2.54a1 1 0 00-1.42 0l-1.13 1.13 3.96 3.96 1.13-1.13z" fill="#4267e7"/></svg>; }
-function EditDoneIcon() { return <svg width="18" height="18" viewBox="0 0 20 20"><rect x="2" y="15" width="16" height="3" rx="1.5" fill="#f2b434"/><path d="M7 12l2 2 4-4" stroke="#f2b434" strokeWidth="2" fill="none" strokeLinecap="round"/></svg>; }
-function TableIcon() { return <svg width="19" height="19" viewBox="0 0 20 20"><rect x="3" y="6" width="14" height="8" rx="3" fill="#4267e7"/><rect x="7" y="6" width="6" height="8" rx="1" fill="#fff" opacity=".7"/></svg>; }
-function UsersIcon() { return <svg width="17" height="17" viewBox="0 0 20 20"><circle cx="7" cy="8" r="3" fill="#4267e7"/><circle cx="13" cy="10" r="2" fill="#4267e7" opacity=".6"/><rect x="2" y="13" width="10" height="4" rx="2" fill="#4267e7" opacity=".4"/><rect x="11" y="13" width="7" height="2.5" rx="1.2" fill="#4267e7" opacity=".2"/></svg>; }
+function EditIcon() { return <svg width="18" height="18" viewBox="0 0 20 20"><path d="M4 13.5V16h2.5l7.4-7.4-2.5-2.5L4 13.5z" fill="#4267e7"/><path d="M15.7 7.29a1 1 0 000-1.42l-2.54-2.54a1 1 0 00-1.42 0l-1.13 1.13 3.96 3.96 1.13-1.13z" fill="#f2b434"/></svg>; }
+function EditDoneIcon() { return <svg width="18" height="18" viewBox="0 0 20 20"><rect x="2" y="15" width="16" height="3" rx="1.5" fill="#f2b434"/><path d="M7 12l2 2 4-4" stroke="#f2b434" strokeWidth="2.2" fill="none" strokeLinecap="round"/></svg>; }
+function TableIcon() { return <svg width="19" height="19" viewBox="0 0 20 20"><rect x="3" y="6" width="14" height="8" rx="3" fill="#4267e7"/><rect x="7" y="6" width="6" height="8" rx="1" fill="#f2b434"/></svg>; }
+function UsersIcon() { return <svg width="17" height="17" viewBox="0 0 20 20"><circle cx="7" cy="8" r="3" fill="#4267e7"/><circle cx="13" cy="10" r="2" fill="#4267e7" opacity=".6"/><rect x="2" y="15" width="14" height="3" rx="1.5" fill="#4267e7" opacity=".2"/><rect x="9" y="14" width="8" height="3" rx="1.5" fill="#4267e7" opacity=".09"/></svg>; }
 function CloseIcon() { return <svg width="15" height="15" viewBox="0 0 20 20"><line x1="5" y1="5" x2="15" y2="15" stroke="#fff" strokeWidth="2"/><line x1="15" y1="5" x2="5" y2="15" stroke="#fff" strokeWidth="2"/></svg>; }
 
 export default App;
