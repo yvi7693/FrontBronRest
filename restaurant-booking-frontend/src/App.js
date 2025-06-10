@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import RestaurantLayout from './RestaurantLayout';
 import RestaurantDesigner from './RestaurantDesigner';
 import './App.css';
-import logo from "./logo.png"; 
 
 const initialFirstFloorTables = [
   { _id: '1', number: 1, x: 340, y: 50, seats: 2, width: 80, height: 40 },
@@ -59,42 +58,68 @@ function App() {
     <div className="rbr-bg">
       <div className="rbr-container">
         <div className="rbr-header">
-          <span className="rbr-logo-box">
-            <img className="rbr-logo-img" src={logo} alt="Logo" />
-          </span>
-          Rimini Table Designer
+          <svg viewBox="0 0 32 32" className="rbr-logo"><circle cx="16" cy="16" r="16" fill="#4267e7"/><rect x="8" y="19" width="16" height="6" rx="3" fill="#fff"/><rect x="10" y="7" width="12" height="10" rx="3" fill="#fff"/><rect x="12.5" y="9.5" width="7" height="5" rx="2.5" fill="#4267e7"/></svg>
+          <span>Рассадка ресторана</span>
         </div>
-        <div className="rbr-toolbar" style={{ marginBottom: 30 }}>
+        <div className="rbr-toolbar">
           <button
-            className={mode === "designer" ? "selected" : ""}
-            onClick={() => setMode("designer")}
+            className={floor === 1 ? "selected" : ""}
+            title="Показать первый этаж"
+            onClick={() => setFloor(1)}
           >
-            🛠️ Редактор зала
+            <span className="rbr-btn-icon">{floor === 1 ? <FloorIconActive /> : <FloorIcon />}</span>
+            1 этаж
           </button>
           <button
-            className={mode === "layout" ? "selected" : ""}
-            onClick={() => setMode("layout")}
+            className={floor === 2 ? "selected" : ""}
+            title="Показать второй этаж"
+            onClick={() => setFloor(2)}
           >
-            👀 Просмотр рассадки
+            <span className="rbr-btn-icon">{floor === 2 ? <FloorIconActive /> : <FloorIcon />}</span>
+            2 этаж
+          </button>
+          <button
+            className={editMode ? "warn" : ""}
+            title={editMode ? "Завершить редактирование (ESC)" : "Редактировать рассадку (E)"}
+            style={{ marginLeft: 18 }}
+            onClick={() => setEditMode(!editMode)}
+          >
+            <span className="rbr-btn-icon">{editMode ? <EditDoneIcon /> : <EditIcon />}</span>
+            {editMode ? "Завершить" : "Редактировать"}
           </button>
         </div>
-        {mode === "designer" ? (
-          <RestaurantDesigner
-            tables={tables}
-            walls={walls}
-            onSave={handleSave}
-          />
-        ) : (
-          <RestaurantLayout
-            tables={tables}
-            walls={walls}
-            selectedTableId={selectedTableId}
-            onTableClick={handleTableClick}
-          />
+        <div className="rbr-canvas-block">
+          {editMode ? (
+            <RestaurantDesigner
+              tables={currentTables}
+              walls={currentWalls}
+              onSave={handleSaveDesigner}
+            />
+          ) : (
+            <RestaurantLayout
+              tables={currentTables}
+              walls={currentWalls}
+              onTableClick={setSelected}
+              selectedTableId={selected}
+              isBooked={isBooked}
+            />
+          )}
+        </div>
+        {selected && !editMode && (
+          <div className="rbr-table-info">
+            <div style={{ fontSize: "1.25em", fontWeight: 700, marginBottom: 7 }}>
+              <TableIcon /> Столик №{currentTables.find(t => t._id === selected)?.number}
+            </div>
+            <div><UsersIcon /> Мест: {currentTables.find(t => t._id === selected)?.seats}</div>
+            <button onClick={() => setSelected(null)}>
+              <CloseIcon /> Закрыть
+            </button>
+          </div>
         )}
         <div className="rbr-footer">
-          <b>Rimini Table Designer</b> · Демо рассадки и редактора столиков для ресторана
+          <span>© {new Date().getFullYear()} Бронирование столиков</span>
         </div>
+        {toast && <div className="rbr-toast">{toast}</div>}
       </div>
     </div>
   );
