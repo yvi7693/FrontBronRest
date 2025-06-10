@@ -22,10 +22,11 @@ function RestaurantLayout({
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
-    // Draw walls
+    // Walls
     ctx.save();
-    ctx.strokeStyle = 'brown';
-    ctx.lineWidth = 5;
+    ctx.strokeStyle = "#a6763c";
+    ctx.lineWidth = 8;
+    ctx.lineCap = "round";
     walls.forEach(wall => {
       ctx.beginPath();
       ctx.moveTo(wall.x1, wall.y1);
@@ -34,17 +35,24 @@ function RestaurantLayout({
     });
     ctx.restore();
 
-    // Draw tables
+    // Tables
     tables.forEach(table => {
       ctx.save();
+      ctx.shadowColor =
+        table._id === selectedTableId
+          ? "#a6763c99"
+          : isBooked && isBooked(table)
+          ? "#a6763c44"
+          : "#a6763c22";
+      ctx.shadowBlur = table._id === selectedTableId ? 15 : 6;
       ctx.fillStyle =
         table._id === selectedTableId
-          ? '#ffe066'
-          : isBooked(table)
-            ? '#aaa'
-            : 'lightblue';
-      ctx.strokeStyle = 'black';
-      ctx.lineWidth = 2;
+          ? "#fff2d8"
+          : isBooked && isBooked(table)
+          ? "#ede0cd"
+          : "#fff";
+      ctx.strokeStyle = "#a6763c";
+      ctx.lineWidth = 3;
       ctx.beginPath();
       if (table.shape === 'circle') {
         ctx.arc(
@@ -60,8 +68,9 @@ function RestaurantLayout({
         ctx.fillRect(table.x, table.y, table.width, table.height);
         ctx.strokeRect(table.x, table.y, table.width, table.height);
       }
-      ctx.fillStyle = 'black';
-      ctx.font = '16px Arial';
+      ctx.shadowBlur = 0;
+      ctx.fillStyle = "#a6763c";
+      ctx.font = '700 18px Montserrat, Arial';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText(
@@ -79,13 +88,17 @@ function RestaurantLayout({
     const x = Math.round(e.clientX - rect.left);
     const y = Math.round(e.clientY - rect.top);
 
-    // Поиск столика по координате клика
     const table = tables.find(
       t =>
-        x >= t.x &&
-        x <= t.x + t.width &&
-        y >= t.y &&
-        y <= t.y + t.height
+        t.shape === 'circle'
+          ? Math.sqrt(
+              Math.pow(x - (t.x + t.width / 2), 2) +
+                Math.pow(y - (t.y + t.height / 2), 2)
+            ) <= t.width / 2
+          : x >= t.x &&
+            x <= t.x + t.width &&
+            y >= t.y &&
+            y <= t.y + t.height
     );
     if (table) {
       onTableClick(table._id);
@@ -93,12 +106,13 @@ function RestaurantLayout({
   }
 
   return (
-    <div style={{ textAlign: 'center' }}>
+    <div className="rbr-canvas-block" style={{ background: "#fff9ee", boxShadow: "none", padding: 0 }}>
       <canvas
         ref={canvasRef}
         width={CANVAS_WIDTH}
         height={CANVAS_HEIGHT}
-        style={{ border: '1px solid #ccc', background: '#fff' }}
+        className="rbr-canvas"
+        style={{ background: '#fff9ee', cursor: 'pointer', touchAction: "none" }}
         onClick={handleCanvasClick}
       />
     </div>
