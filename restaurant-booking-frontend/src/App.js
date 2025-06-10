@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import RestaurantLayout from './RestaurantLayout';
 import RestaurantDesigner from './RestaurantDesigner';
 
-// Пример начальных массивов столов для двух этажей
+// Пример начальных массивов столов и стен
 const initialFirstFloorTables = [
   { _id: '1', number: 1, x: 340, y: 50, seats: 2, width: 80, height: 40 },
   { _id: '2', number: 2, x: 170, y: 150, seats: 8, width: 180, height: 60 },
@@ -11,52 +11,47 @@ const initialFirstFloorTables = [
   { _id: '5', number: 5, x: 430, y: 330, seats: 8, width: 180, height: 60 },
 ];
 
-// Пример (приблизительный) второго этажа, координаты/столы можно доработать
+const initialFirstFloorWalls = [
+  // Пример стен (x1, y1, x2, y2)
+  { id: 'w1', x1: 100, y1: 100, x2: 300, y2: 100 },
+];
+
 const initialSecondFloorTables = [
   { _id: '6', number: 6, x: 40, y: 40, seats: 4, width: 60, height: 60 },
   { _id: '7', number: 7, x: 130, y: 40, seats: 4, width: 60, height: 60 },
   { _id: '8', number: 8, x: 40, y: 120, seats: 6, width: 120, height: 40 },
-  { _id: '9', number: 9, x: 40, y: 180, seats: 6, width: 120, height: 40 },
-  { _id: '10', number: 10, x: 40, y: 250, seats: 6, width: 120, height: 40 },
-  { _id: '11', number: 11, x: 170, y: 100, seats: 4, width: 60, height: 60 },
-  { _id: '12', number: 12, x: 330, y: 280, seats: 4, width: 70, height: 70, rotate: 20 },
-  { _id: '13', number: 13, x: 430, y: 320, seats: 4, width: 70, height: 70, rotate: -20 },
-  { _id: '14', number: 14, x: 260, y: 120, seats: 4, width: 80, height: 40 },
-  { _id: '15', number: 15, x: 350, y: 120, seats: 4, width: 80, height: 40 },
-  { _id: '16', number: 16, x: 440, y: 120, seats: 4, width: 80, height: 40 },
-  { _id: '17', number: 17, x: 530, y: 70, seats: 6, width: 120, height: 40 },
-  { _id: '18', number: 18, x: 530, y: 130, seats: 6, width: 120, height: 40 },
-  { _id: '19', number: 19, x: 680, y: 60, seats: 1, width: 35, height: 35, shape: 'circle' },
-  { _id: '20', number: 20, x: 680, y: 110, seats: 1, width: 35, height: 35, shape: 'circle' },
-  { _id: '21', number: 21, x: 680, y: 160, seats: 1, width: 35, height: 35, shape: 'circle' },
-  { _id: '22', number: 22, x: 720, y: 60, seats: 1, width: 35, height: 35, shape: 'circle' },
-  { _id: '23', number: 23, x: 720, y: 110, seats: 1, width: 35, height: 35, shape: 'circle' },
-  { _id: '24', number: 24, x: 720, y: 160, seats: 1, width: 35, height: 35, shape: 'circle' },
-  { _id: '25', number: 25, x: 600, y: 450, seats: 6, width: 140, height: 50 },
-  { _id: '26', number: 26, x: 600, y: 520, seats: 6, width: 140, height: 50 },
-  { _id: '27', number: 27, x: 700, y: 300, seats: 4, width: 70, height: 70 },
+  // ... остальные столики
+];
+
+const initialSecondFloorWalls = [
+  // Стен пока нет, добавьте по мере необходимости
 ];
 
 function App() {
   const [floor, setFloor] = useState(1);
   const [editMode, setEditMode] = useState(false);
 
-  // Сохраняем схемы для каждого этажа отдельно
+  // Состояние для столиков и стен по этажам
   const [firstFloorTables, setFirstFloorTables] = useState(initialFirstFloorTables);
+  const [firstFloorWalls, setFirstFloorWalls] = useState(initialFirstFloorWalls);
   const [secondFloorTables, setSecondFloorTables] = useState(initialSecondFloorTables);
+  const [secondFloorWalls, setSecondFloorWalls] = useState(initialSecondFloorWalls);
 
   const [selected, setSelected] = useState(null);
 
   // Заглушка для бронирования (все столы свободны)
   const isBooked = () => false;
 
-  // Получаем текущие столы и функцию сохранения
+  // Получаем текущие столы, стены и функции сохранения
   const currentTables = floor === 1 ? firstFloorTables : secondFloorTables;
   const setCurrentTables = floor === 1 ? setFirstFloorTables : setSecondFloorTables;
+  const currentWalls = floor === 1 ? firstFloorWalls : secondFloorWalls;
+  const setCurrentWalls = floor === 1 ? setFirstFloorWalls : setSecondFloorWalls;
 
   // Сохранение схемы после редактирования
-  const handleSaveDesigner = (newTables) => {
+  const handleSaveDesigner = (newTables, newWalls) => {
     setCurrentTables(newTables);
+    setCurrentWalls(newWalls);
     setEditMode(false);
   };
 
@@ -109,11 +104,13 @@ function App() {
       {editMode ? (
         <RestaurantDesigner
           tables={currentTables}
+          walls={currentWalls}
           onSave={handleSaveDesigner}
         />
       ) : (
         <RestaurantLayout
           tables={currentTables}
+          walls={currentWalls}
           onTableClick={setSelected}
           selectedTableId={selected}
           isBooked={isBooked}
